@@ -1,0 +1,101 @@
+/* Problem #1 */
+
+SELECT * FROM game_sales
+ORDER BY games_sold DESC
+LIMIT 10;
+
+/* Problem #2 */
+
+WITH temp AS(
+SELECT 
+    g.game AS name, 
+    r.critic_score AS c_score, 
+    r.user_score AS u_score
+    FROM game_sales g
+    LEFT OUTER JOIN reviews r
+    ON g.game = r.game
+)
+SELECT COUNT(name) AS count
+FROM temp
+WHERE c_score IS NULL AND u_score IS NULL;
+
+/* Problem #3 */
+
+WITH temp AS (
+SELECT 
+    g.year AS year,
+    AVG(r.critic_score) AS avg_cs
+    FROM game_sales g
+    JOIN reviews r
+    ON g.game = r.game
+    GROUP BY g.year
+)
+SELECT year, ROUND(avg_cs, 2) AS avg_critic_score
+FROM temp
+ORDER BY avg_cs DESC
+LIMIT 10;
+
+/* Problem #4 */
+
+WITH temp AS (
+SELECT 
+    g.year AS year,
+    AVG(r.critic_score) AS avg_cs,
+    COUNT(g.game) AS num_games
+    FROM game_sales g
+    JOIN reviews r
+    ON g.game = r.game
+    GROUP BY g.year
+)
+SELECT year, ROUND(avg_cs, 2) AS avg_critic_score, num_games
+FROM temp
+WHERE num_games > 4
+ORDER BY avg_cs DESC
+LIMIT 10;
+
+/* Problem #5 */
+
+WITH temp AS (
+SELECT year, avg_critic_score
+FROM top_critic_years_more_than_four_games)
+
+SELECT * FROM top_critic_years
+EXCEPT
+SELECT * FROM temp
+ORDER BY avg_critic_score DESC;
+
+/* Problem #6 */
+
+WITH temp AS (
+SELECT 
+    g.year AS year,
+    AVG(r.user_score) AS avg_us,
+    COUNT(g.game) AS num_games
+    FROM game_sales g
+    JOIN reviews r
+    ON g.game = r.game
+    GROUP BY g.year
+)
+SELECT year, ROUND(avg_us, 2) AS avg_user_score, num_games
+FROM temp
+WHERE num_games > 4
+ORDER BY avg_us DESC
+LIMIT 10;
+
+/* Problem #7 */
+
+SELECT year FROM top_critic_years_more_than_four_games
+INTERSECT
+SELECT year FROM top_user_years_more_than_four_games;
+
+/* Problem #8 */
+
+SELECT year, SUM(games_sold) AS total_games_sold
+FROM game_sales
+WHERE year IN 
+    (SELECT year FROM top_critic_years_more_than_four_games
+     INTERSECT
+     SELECT year FROM top_user_years_more_than_four_games)
+GROUP BY year
+ORDER BY SUM(games_sold) DESC;
+
