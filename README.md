@@ -6,6 +6,7 @@ The database contains two tables. Datacamp have limited each table to 400 rows f
 The two tables are:
 
 game_sales (7 columns: game, platform, publishes, developer, games_sold, year)
+
 reviews (3 columns: year, critic_score, user_score)
 
 Problem #1:
@@ -23,6 +24,7 @@ Finding game critics' ten favorite years, this time with the stipulation that a 
 Datacamp created two additional tables with the results of previous two queries:
 
 top_critic_years (2 columns: year, avg_critic_score)
+
 top_critic_years_more_than_four_games (3 columns: year, num_games, avg_critic_score)
 
 Problem #5:
